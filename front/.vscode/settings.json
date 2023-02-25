@@ -1,0 +1,13 @@
+{
+  "editor.autoIndent": "brackets",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.largeFileOptimizations": false,
+  "editor.tabSize": 2,
+  "editor.unicodeHighlight.nonBasicASCII": false,
+  "prettier.bracketSameLine": true,
+  "prettier.endOfLine": "auto",
+  "prettier.printWidth": 100,
+  "prettier.singleQuote": true,
+  "prettier.vueIndentScriptAndStyle": true
+}

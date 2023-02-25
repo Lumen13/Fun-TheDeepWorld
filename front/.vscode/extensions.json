@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "ms-vscode-remote.remote-containers",
+    "ms-azuretools.vscode-docker",
+    "dbaeumer.vscode-eslint",
+    "ecmel.vscode-html-css",
+    "zainchen.json",
+    "esbenp.prettier-vscode",
+    "hollowtree.vue-snippets",
+    "vue.volar"
+  ]
+}
