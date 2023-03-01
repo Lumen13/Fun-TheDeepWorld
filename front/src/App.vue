@@ -1,31 +1,57 @@
 <template>
-  <div id="positiveHeightMeter" class="heightMeter" v-if="isCurrentLayoutHasPositiveValue">
+  <div
+    id="overgroundHeightMeterDiv"
+    class="fixed-bottom heightMeter"
+    v-if="currentLayout === overgroundLayout.name">
     <span>
-      <span id="heightMeterNumber">{{ mousePosition }} </span>м над уровнем моря
+      <span id="overgroundHeightMeterNumberDiv" class="heightMeterNumber">{{ mousePosition }} </span
+      >м над уровнем моря
     </span>
   </div>
-  <div id="negativeHeightMeter" class="heightMeter" v-else>
+  <div
+    id="zeroHeightMeterDiv"
+    class="fixed-bottom heightMeter"
+    v-else-if="currentLayout === zeroLayout.name">
+    <span id="zeroHeightMeterNumberSpan" class="heightMeterNumber">нулевой уровень</span>
+  </div>
+  <div
+    id="undergroundHeightMeterDiv"
+    class="fixed-bottom heightMeter"
+    v-else-if="currentLayout === undergroundLayout.name">
     <span>
-      на <span id="heightMeterNumber">{{ mousePosition }} </span>м ниже уровня моря
+      на
+      <span id="undergroundHeightMeterNumberSpan" class="heightMeterNumber"
+        >{{ mousePosition }} </span
+      >м ниже уровня моря
     </span>
   </div>
 
-  <div
-    id="overgroundLayoutId"
-    class="backgroundLayout, overgroundLayout"
-    :hasPositiveValue="true"
-    :fromHeight="overgroundLayout.fromHeight"
-    :toHeight="overgroundLayout.toHeight"
-    :height="overgroundLayout.height"
-    @click="showOvergroundMousePosition"></div>
-  <div
-    id="undergroundLayoutId"
-    class="backgroundLayout, undergroundLayout"
-    :hasPositiveValue="false"
-    :fromHeight="undergroundLayout.fromHeight"
-    :toHeight="undergroundLayout.toHeight"
-    :height="undergroundLayout.height"
-    @click="showUndergroundPosition"></div>
+  <div id="backGroundLayoutDiv" @click="showClickPosition">
+    <div
+      :id="overgroundLayout.name + 'Div'"
+      :name="overgroundLayout.name"
+      :class="['backgroundLayout', overgroundLayout.name]"
+      :fromHeight="overgroundLayout.fromHeight"
+      :toHeight="overgroundLayout.toHeight"
+      :height="overgroundLayout.height"
+      :heightPx="overgroundLayout.heightPx"></div>
+    <div
+      :id="zeroLayout.name + 'Div'"
+      :name="zeroLayout.name"
+      :class="['backgroundLayout', zeroLayout.name]"
+      :fromHeight="zeroLayout.fromHeight"
+      :toHeight="zeroLayout.toHeight"
+      :height="zeroLayout.height"
+      :heightPx="zeroLayout.heightPx"></div>
+    <div
+      :id="undergroundLayout.name + 'Div'"
+      :name="undergroundLayout.name"
+      :class="['backgroundLayout', undergroundLayout.name]"
+      :fromHeight="undergroundLayout.fromHeight"
+      :toHeight="undergroundLayout.toHeight"
+      :height="undergroundLayout.height"
+      :heightPx="undergroundLayout.heightPx"></div>
+  </div>
 </template>
 
 <script>
@@ -33,14 +59,23 @@
     name: 'mainPage',
     data() {
       return {
-        isCurrentLayoutHasPositiveValue: true,
+        currentLayout: 'zeroLayout',
         overgroundLayout: {
+          name: 'overgroundLayout',
           fromHeight: 0,
           toHeight: 358000,
           height: 358000,
           heightPx: '358000px',
         },
+        zeroLayout: {
+          name: 'zeroLayout',
+          fromHeight: 0,
+          toHeight: 0,
+          height: 5,
+          heightPx: '5px',
+        },
         undergroundLayout: {
+          name: 'undergroundLayout',
           fromHeight: 0,
           toHeight: -63570,
           height: 63570,
@@ -51,21 +86,16 @@
       };
     },
     methods: {
-      showOvergroundMousePosition(event) {
-        this.setPositiveValueFlagByEvent(event);
+      showClickPosition(event) {
+        let currentClickPosition = event.offsetY;
+        this.currentLayout = event.target.getAttribute('name');
 
-        let layerMousePosition = event.offsetY;
-        let layerElementToHeight = Number(event.target.getAttribute('toHeight'));
-        this.mousePosition = layerElementToHeight - layerMousePosition;
-      },
-      showUndergroundPosition(event) {
-        this.setPositiveValueFlagByEvent(event);
-
-        this.mousePosition = event.offsetY;
-      },
-      setPositiveValueFlagByEvent(event) {
-        this.isCurrentLayoutHasPositiveValue =
-          'true' === event.target.getAttribute('hasPositiveValue');
+        if (currentClickPosition === 0 || this.currentLayout === this.zeroLayout.name)
+          this.mousePosition = 0;
+        else if (this.currentLayout === this.overgroundLayout.name)
+          this.mousePosition = Number(event.target.getAttribute('toHeight')) - currentClickPosition;
+        else if (this.currentLayout === this.undergroundLayout.name)
+          this.mousePosition = currentClickPosition;
       },
     },
   };
@@ -73,19 +103,13 @@
 
 <style>
   .heightMeter {
-    position: fixed;
-    margin-top: 20%;
-    top: 50%;
-    left: 15%;
-    right: 15%;
     text-align: center;
     font-size: x-large;
     font-weight: bold;
-    opacity: 80%;
-    z-index: 100;
+    padding-bottom: 3%;
   }
 
-  #heightMeterNumber {
+  .heightMeterNumber {
     font-size: xx-large;
   }
 
@@ -94,14 +118,17 @@
     background-color: rgb(207, 222, 231);
   }
 
+  .zeroLayout {
+    height: v-bind('zeroLayout.heightPx');
+    background-color: rgb(189, 176, 163);
+  }
+
   .undergroundLayout {
     height: v-bind('undergroundLayout.heightPx');
     background-color: rgb(247, 235, 222);
   }
 
   .backgroundLayout {
-    position: absolute;
-    width: 100%;
     z-index: 1;
   }
 </style>
